@@ -1,0 +1,314 @@
+42[
+    "network-stats-data",
+    {
+        "action": "block",
+        "data": {
+            "id": "bitrue-icelake-xdc-eks-13",
+            "block": {
+                "number": 77236542,
+                "hash": "0x63b34fcb4d4f9590b4acc7ac16a7357fff05f5052c332dc04af47a1994d2e59d",
+                "parentHash": "0xc9a038f503b9223f6eb7066aa335c8cb7b13fc198d7c86b94569dbc492c2a637",
+                "timestamp": 1721063847,
+                "miner": "xdcccab2f5267bc66b69f1688560c2e075216908a2c",
+                "gasUsed": 295180,
+                "gasLimit": 420000000,
+                "difficulty": "93",
+                "totalDifficulty": "7102817141",
+                "transactions": [
+                    {
+                        "hash": "0xff4a6c2761b50b18a764ec9385858cca0e524d51616c32e7cb4ad53b4eb06360"
+                    },
+                    {
+                        "hash": "0xce4d11df87eaa2a7be6a4a07b3eeb52027f9b14ff6f006e985086cfb486808b2"
+                    },
+                    {
+                        "hash": "0xc5b5b2e59061c8f759786697c0c1b05d0fb4cc9f5a41e25c6d305b3d9b3a7483"
+                    }
+                ],
+                "transactionsRoot": "0x58697f1b013322d20f6d236e94040042da7e6d221b1cfd8bd69c936d5725d530",
+                "stateRoot": "0xd9099156633f856e9eb35cac042c46623f80844c8f62a5446d4f86f4c92dae32",
+                "uncles": [],
+                "trusted": false,
+                "arrived": 1721063847210,
+                "received": 1721063848574,
+                "propagation": 1364,
+                "fork": 0
+            },
+            "propagationAvg": 2206,
+            "history": [
+                672,
+                3084,
+                1175,
+                5402,
+                3392,
+                1320,
+                4873,
+                2876,
+                974,
+                6099,
+                4251,
+                2073,
+                320,
+                3332,
+                4281,
+                2313,
+                449,
+                1624,
+                2876,
+                848,
+                538,
+                2313,
+                228,
+                961,
+                3123,
+                1126,
+                2115,
+                260,
+                2313,
+                3394,
+                1425,
+                3509,
+                1580,
+                3019,
+                980,
+                2039,
+                2732,
+                847,
+                2121,
+                1364
+            ],
+            "latestCommittedBlockInfo": {
+                "number": 0,
+                "round": 0,
+                "hash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+            }
+        }
+    }
+]
+
+Received message: 42[
+    "network-stats-data",
+    {
+        "action": "block",
+        "data": {
+            "id": "bitrue-icelake-xdc-eks-13",
+            "block": {
+                "number": 77236542,
+                "hash": "0x63b34fcb4d4f9590b4acc7ac16a7357fff05f5052c332dc04af47a1994d2e59d",
+                "parentHash": "0xc9a038f503b9223f6eb7066aa335c8cb7b13fc198d7c86b94569dbc492c2a637",
+                "timestamp": 1721063847,
+                "miner": "xdcccab2f5267bc66b69f1688560c2e075216908a2c",
+                "gasUsed": 295180,
+                "gasLimit": 420000000,
+                "difficulty": "93",
+                "totalDifficulty": "7102817141",
+                "transactions": [
+                    {
+                        "hash": "0xff4a6c2761b50b18a764ec9385858cca0e524d51616c32e7cb4ad53b4eb06360"
+                    },
+                    {
+                        "hash": "0xce4d11df87eaa2a7be6a4a07b3eeb52027f9b14ff6f006e985086cfb486808b2"
+                    },
+                    {
+                        "hash": "0xc5b5b2e59061c8f759786697c0c1b05d0fb4cc9f5a41e25c6d305b3d9b3a7483"
+                    }
+                ],
+                "transactionsRoot": "0x58697f1b013322d20f6d236e94040042da7e6d221b1cfd8bd69c936d5725d530",
+                "stateRoot": "0xd9099156633f856e9eb35cac042c46623f80844c8f62a5446d4f86f4c92dae32",
+                "uncles": [],
+                "trusted": false,
+                "arrived": 1721063847210,
+                "received": 1721063848574,
+                "propagation": 1364,
+                "fork": 0
+            },
+            "propagationAvg": 2206,
+            "history": [
+                672,
+                3084,
+                1175,
+                5402,
+                3392,
+                1320,
+                4873,
+                2876,
+                974,
+                6099,
+                4251,
+                2073,
+                320,
+                3332,
+                4281,
+                2313,
+                449,
+                1624,
+                2876,
+                848,
+                538,
+                2313,
+                228,
+                961,
+                3123,
+                1126,
+                2115,
+                260,
+                2313,
+                3394,
+                1425,
+                3509,
+                1580,
+                3019,
+                980,
+                2039,
+                2732,
+                847,
+                2121,
+                1364
+            ],
+            "latestCommittedBlockInfo": {
+                "number": 0,
+                "round": 0,
+                "hash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+            }
+        }
+    }
+]
+// ************************** network-stats-nodes ******************************
+Received message: 42[
+    "network-stats-nodes",
+    {
+        "nodes": [
+            {
+                "id": "Globiance_S16",
+                "trusted": false,
+                "info": {
+                    "name": "Globiance_S16",
+                    "node": "XDC/v1.6.0/linux-amd64/go1.21.10",
+                    "port": 30303,
+                    "net": "50",
+                    "protocol": "eth/100",
+                    "api": "No",
+                    "os": "linux",
+                    "os_v": "amd64",
+                    "client": "0.1.1",
+                    "canUpdateHistory": true,
+                    "ip": "185.215.166.225"
+                },
+                "geo": {
+                    "range": [
+                        3117917184,
+                        3117918207
+                    ],
+                    "country": "DE",
+                    "region": "NW",
+                    "eu": "1",
+                    "timezone": "Europe/Berlin",
+                    "city": "DÃ¼sseldorf",
+                    "ll": [
+                        51.2184,
+                        6.7734
+                    ],
+                    "metro": 0,
+                    "area": 20
+                },
+                "stats": {
+                    "active": false,
+                    "mining": false,
+                    "hashrate": 0,
+                    "peers": 17,
+                    "pending": 2,
+                    "gasPrice": 250000000,
+                    "block": {
+                        "number": 77235396,
+                        "hash": "0xb7b748e4fa6d422b599448d945719ad934a93537384ad216228f65c5e0f50486",
+                        "parentHash": "0xf0ef975cfcb991df19e5e8fbecff420dd86d571cf1fcdbd73b5d9a5c4afcc4c5",
+                        "timestamp": 1721061470,
+                        "miner": "xdc65c90c2d3e99d8366f90db7f4d25f23a0a569d49",
+                        "gasUsed": 295170,
+                        "gasLimit": 420000000,
+                        "difficulty": "93",
+                        "totalDifficulty": "7102710570",
+                        "transactions": [
+                            {
+                                "hash": "0x18c6e1476e33100a658ccf4c0cb5b79d5cc7010a1362859e141f9666afa5c375"
+                            },
+                            {
+                                "hash": "0x0400406659700f119406bf3fba13d2b5bee2280fd2f73234f5a48b78c0bbf684"
+                            },
+                            {
+                                "hash": "0x4db63e68a9d0d7f3235ac5900040b32d7f63f42e2811d1fcb6e4943e43da0b30"
+                            }
+                        ],
+                        "transactionsRoot": "0x684e9216284337a419e5f31c28fc9a23651963e89ade7ad0c85368bed94438de",
+                        "stateRoot": "0x1e149923bb03863df69a6dc96c735b33cfc9ee2d463436729419817c736db38b",
+                        "uncles": [],
+                        "trusted": false,
+                        "arrived": 1721061470209,
+                        "received": 1721061478432,
+                        "propagation": 8223,
+                        "fork": 0
+                    },
+                    "syncing": true,
+                    "propagationAvg": 20154,
+                    "latency": "1492",
+                    "uptime": 68,
+                    "latestCommittedBlockInfo": {
+                        "number": 0,
+                        "round": 0,
+                        "hash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                    }
+                },
+                "history": [
+                    53979,
+                    51683,
+                    49717,
+                    48032,
+                    45990,
+                    43945,
+                    41972,
+                    39904,
+                    37819,
+                    35623,
+                    33979,
+                    31887,
+                    29828,
+                    27940,
+                    25919,
+                    23811,
+                    21917,
+                    19937,
+                    17994,
+                    15877,
+                    12042,
+                    11866,
+                    9989,
+                    7867,
+                    5994,
+                    3986,
+                    1816,
+                    5470,
+                    3354,
+                    1386,
+                    9018,
+                    7059,
+                    5110,
+                    2736,
+                    933,
+                    8223,
+                    6179,
+                    3010,
+                    2085,
+                    284
+                ],
+                "uptime": {
+                    "started": 1714896532919,
+                    "up": 4193983844,
+                    "down": 1970963183,
+                    "lastStatus": false,
+                    "lastUpdate": 1721061479946
+                },
+                "spark": "P2tGQFi"
+            },
+        ]
+    }
+]
