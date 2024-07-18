@@ -14,7 +14,7 @@ const socketData = {
       ip: { type: 'varchar(255)', defaultValue: 'Unknown ip' },
       city: { type: 'varchar(255)', defaultValue: 'unknown city' },
       region: { type: 'varchar(255)', defaultValue: 'unknown region' },
-      BlockNumber: { type: 'varchar(255)', defaultValue: 'unknown number' },
+      blockNumber: { type: 'varchar(255)', defaultValue: 'unknown number' },
       peer: { type: 'varchar(255)', defaultValue: 'unknown peer' },
       pending: { type: 'varchar(255)', defaultValue: 'unknown pending' },
       uptime: { type: 'varchar(255)', defaultValue: 'unknown uptime' },

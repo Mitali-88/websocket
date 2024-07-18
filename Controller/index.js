@@ -52,56 +52,131 @@ export const getSelectedData = async (receivedData) => {
                 }
             });
 
-            // Map and filter data for insertion into PostgreSQL
-            const filteredData = newData.map(async data => {
-                const os = data?.info?.os || 'Unknown os';
-                const os_v = data?.info?.os_v || 'Unknown os_v';
-                const node = data?.info?.node || 'Unknown node';
-                const go = node.split('/').pop() || 'Unknown go version';
-                const mainClient = node.split('/')[0] || 'Unknown mainClient';
+            // Map and filter data for insertion or update in PostgreSQL
+            const results = await Promise.all(newData.map(async data => {
+                const id = data?.id || 'Unknown id';
 
                 const formattedData = {
                     country: data?.geo?.country || 'Unknown client',
                     client: data?.info?.client || 'Unknown client',
                     lastUpdate: new Date(data?.uptime?.lastUpdate).toISOString(),
                     port: data?.info?.port || 'Unknown port',
-                    node,
-                    os: `${os} - ${os_v}`,
+                    node: data?.info?.node || 'Unknown node',
+                    os: `${data?.info?.os || 'Unknown os'} - ${data?.info?.os_v || 'Unknown os_v'}`,
                     name: data?.info?.name || 'Unknown name',
-                    id: data?.id || 'Unknown id',
                     miner: data?.stats?.block?.miner || 'Unknown miner',
                     ip: data?.info?.ip || 'Unknown ip',
                     city: data?.geo?.city || 'unknown city',
                     region: data?.geo?.region || 'unknown region',
-                    BlockNumber: data?.stats?.block?.number || 'unknown number',
+                    blocknumber: data?.stats?.block?.number || 'unknown number',
                     peer: data?.stats?.peers || 'unknown peer',
                     pending: data?.stats?.pending || 'unknown pending',
                     uptime: data?.stats?.uptime || 'unknown uptime',
                     syncing: data?.stats?.syncing || 'unknown syncing',
                     timestamp: data?.stats?.block?.timestamp || 'unknown timestamp',
                     latency: data?.stats?.latency || 'unknown latency',
-                    go,
-                    mainClient, // Save the extracted Go version
+                    go: (data?.info?.node || 'Unknown node').split('/').pop() || 'Unknown go version',
+                    mainClient: (data?.info?.node || 'Unknown node').split('/')[0] || 'Unknown mainClient'
                 };
 
-                // Insert formatted data into PostgreSQL
-                const columns = Object.keys(formattedData).join(', ');
-                const values = Object.values(formattedData);
-                const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
+                // Check if data exists for the same date in PostgreSQL
+                const existingDataQuery = `
+                    SELECT id FROM socketData WHERE id = $1 AND DATE(lastUpdate) = DATE($2)
+                `;
+                const existingDataResult = await client.query(existingDataQuery, [id, formattedData.lastUpdate]);
 
-                const queryText = `INSERT INTO socketData (${columns}) VALUES (${placeholders})`;
+                if (existingDataResult.rows.length > 0) {
+                    // Data exists for the same date, update it
+                    const updateQuery = `
+                        UPDATE socketData
+                        SET
+                            country = $2,
+                            client = $3,
+                            lastUpdate = $4,
+                            port = $5,
+                            node = $6,
+                            os = $7,
+                            name = $8,
+                            miner = $9,
+                            ip = $10,
+                            city = $11,
+                            region = $12,
+                            blocknumber = $13,
+                            peer = $14,
+                            pending = $15,
+                            uptime = $16,
+                            syncing = $17,
+                            timestamp = $18,
+                            latency = $19,
+                            go = $20,
+                            mainClient = $21
+                        WHERE id = $1 AND DATE(lastUpdate) = DATE($4)
+                    `;
+                    const updateValues = [
+                        id,
+                        formattedData.country,
+                        formattedData.client,
+                        formattedData.lastUpdate,
+                        formattedData.port,
+                        formattedData.node,
+                        formattedData.os,
+                        formattedData.name,
+                        formattedData.miner,
+                        formattedData.ip,
+                        formattedData.city,
+                        formattedData.region,
+                        formattedData.blocknumber,
+                        formattedData.peer,
+                        formattedData.pending,
+                        formattedData.uptime,
+                        formattedData.syncing,
+                        formattedData.timestamp,
+                        formattedData.latency,
+                        formattedData.go,
+                        formattedData.mainClient
+                    ];
 
-                try {
-                    await client.query(queryText, values);
-                } catch (error) {
-                    console.error(`Error inserting data into PostgreSQL: ${error}`);
-                    throw new Error(`Failed to insert data: ${error.message}`);
+                    await client.query(updateQuery, updateValues);
+                } else {
+                    // Data does not exist for the same date, insert it
+                    const insertQuery = `
+                        INSERT INTO socketData (id, country, client, lastUpdate, port, node, os, name,
+                            miner, ip, city, region, "blocknumber", peer, pending, uptime, syncing,
+                            timestamp, latency, go, mainClient)
+                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
+                            $17, $18, $19, $20, $21)
+                    `;
+                    const insertValues = [
+                        id,
+                        formattedData.country,
+                        formattedData.client,
+                        formattedData.lastUpdate,
+                        formattedData.port,
+                        formattedData.node,
+                        formattedData.os,
+                        formattedData.name,
+                        formattedData.miner,
+                        formattedData.ip,
+                        formattedData.city,
+                        formattedData.region,
+                        formattedData.blocknumber,
+                        formattedData.peer,
+                        formattedData.pending,
+                        formattedData.uptime,
+                        formattedData.syncing,
+                        formattedData.timestamp,
+                        formattedData.latency,
+                        formattedData.go,
+                        formattedData.mainClient
+                    ];
+
+                    await client.query(insertQuery, insertValues);
                 }
 
-                return formattedData; // Optionally return formatted data if needed
-            });
+                return { success: true, message: 'Data saved or updated successfully' };
+            }));
 
-            return { success: true, message: 'Data saved successfully' };
+            return { success: true, message: 'All data processed successfully' };
         } else {
             throw new Error('No data received yet');
         }
@@ -144,9 +219,9 @@ export const getOs = async () => {
 export const getClient = async () => {
     try {
         const result = await client.query(`
-            SELECT go, COUNT(*) AS node_count 
+            SELECT mainClient, COUNT(*) AS node_count 
             FROM socketData 
-            GROUP BY go
+            GROUP BY mainClient
         `);
 
         return result.rows; // Return the fetched data
