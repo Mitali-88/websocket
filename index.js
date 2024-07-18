@@ -22,7 +22,7 @@ cron.schedule('*/1 * * * *', async () => {
     try {
         await startSocket();
         // Optionally, you can perform additional tasks after WebSocket task completes
-        console.log('WebSocket task completed successfully.');
+        // console.log('WebSocket task completed successfully.');
     } catch (error) {
         console.error('Error running WebSocket task:', error);
     }

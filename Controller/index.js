@@ -1,46 +1,45 @@
-
 import WebSocket from 'ws';
-// const { client } = require('../db/db'); // Import PostgreSQL client instance
-import { client } from '../db/db.js'; 
-const serverUrl = 'wss://stats-ws.xdc.org/stats-data/?EIO=4&transport=websocket';
+import { client } from '../db/db.js';
 
+const serverUrl = 'wss://stats-ws.xdc.org/stats-data/?EIO=4&transport=websocket';
 let receivedData = [];
 
+
 export const startSocket = () => {
-    return new Promise((resolve, reject) => {
-        const socket = new WebSocket(serverUrl);
+    const socket = new WebSocket(serverUrl);
 
-        socket.on('open', function () {
-            console.log('WebSocket connection established.');
-            // Send "40" to the WebSocket server if needed
-            socket.send('40');
-        });
+    socket.on('open', function () {
+        console.log('WebSocket connection established.');
+        socket.send('40');
+    });
 
-        socket.on('message', function (data) {
-           
-            receivedData.push(data);
+    socket.on('message', function (data) {
+        receivedData.push(data);
+    });
 
-            console.log(`Received message: ${data}`);
-            
-        });
+    socket.on('close', function () {
+        console.log('WebSocket connection closed.');
 
-        socket.on('close', function () {
-            console.log('WebSocket connection closed.');
-            // Perform any cleanup if needed
-            resolve(); // Resolve the promise when socket closes
-        });
+        // Call getSelectedData to process and save data
+        getSelectedData(receivedData)
+            .then(filteredData => {
+                console.log('Data saved successfully:', filteredData);
+            })
+            .catch(error => {
+                console.error('Error processing or saving data:', error);
+            });
+    });
 
-        socket.on('error', function (error) {
-            console.error('WebSocket error:', error);
-            reject(error); // Reject the promise on WebSocket error
-        });
+    socket.on('error', function (error) {
+        console.error('WebSocket error:', error);
     });
 };
 
-
-export const getSelectedData = async (req, res) => {
+export const getSelectedData = async (receivedData) => {
     try {
         let newData = [];
+
+        // Process receivedData
         if (receivedData.length > 0) {
             receivedData.forEach(data => {
                 try {
@@ -54,14 +53,14 @@ export const getSelectedData = async (req, res) => {
             });
 
             // Map and filter data for insertion into PostgreSQL
-            const filteredData = newData.map(data => {
+            const filteredData = newData.map(async data => {
                 const os = data?.info?.os || 'Unknown os';
                 const os_v = data?.info?.os_v || 'Unknown os_v';
                 const node = data?.info?.node || 'Unknown node';
                 const go = node.split('/').pop() || 'Unknown go version';
                 const mainClient = node.split('/')[0] || 'Unknown mainClient';
 
-                return {
+                const formattedData = {
                     country: data?.geo?.country || 'Unknown client',
                     client: data?.info?.client || 'Unknown client',
                     lastUpdate: new Date(data?.uptime?.lastUpdate).toISOString(),
@@ -84,12 +83,10 @@ export const getSelectedData = async (req, res) => {
                     go,
                     mainClient, // Save the extracted Go version
                 };
-            });
 
-            // Insert filtered data into PostgreSQL
-            for (let data of filteredData) {
-                const columns = Object.keys(data).join(', ');
-                const values = Object.values(data);
+                // Insert formatted data into PostgreSQL
+                const columns = Object.keys(formattedData).join(', ');
+                const values = Object.values(formattedData);
                 const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
 
                 const queryText = `INSERT INTO socketData (${columns}) VALUES (${placeholders})`;
@@ -98,18 +95,22 @@ export const getSelectedData = async (req, res) => {
                     await client.query(queryText, values);
                 } catch (error) {
                     console.error(`Error inserting data into PostgreSQL: ${error}`);
+                    throw new Error(`Failed to insert data: ${error.message}`);
                 }
-            }
 
-            res.json(filteredData);
+                return formattedData; // Optionally return formatted data if needed
+            });
+
+            return { success: true, message: 'Data saved successfully' };
         } else {
-            res.status(404).send('No data received yet');
+            throw new Error('No data received yet');
         }
     } catch (error) {
         console.error('Error handling selectedData request:', error);
-        res.status(500).send('Internal server error');
+        return { success: false, message: `Error: ${error.message}` };
     }
-}
+};
+
 
 export const getNodes = async () => {
     try {

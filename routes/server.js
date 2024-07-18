@@ -24,14 +24,14 @@ router.get('/getClient', getClient)
 
 router.get('/getAllData', async (req, res) => {
     try {
-        const nodes = await getNodes();
+        // const nodes = await getNodes();
         const os = await getOs();
         const clientData = await getClient();
         const clientType = await getClientType();
         const countryNode = await getCountryNode();
 
         const allData = {
-            nodes,
+            // nodes,
             os,
             clientData,
             clientType,
