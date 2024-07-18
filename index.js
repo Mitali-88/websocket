@@ -1,37 +1,42 @@
 // index.js
 
 import express, { json } from 'express';
-import router from './routes/server.js'; // Corrected import path
-import {client}  from './db/db.js'; // Import database client and setup
+import router from './routes/server.js';
+import { sequelize, testConnection } from './db/db.js'; // Import Sequelize instance and testConnection function
 import cron from 'node-cron';
-import {startSocket} from './Controller/index.js'
+import { startSocket } from './Controller/index.js';
+
 const app = express();
 const port = 8000;
 
- // Access the client from db.js
-
-// Middleware to use for all routes
+// Middleware to attach Sequelize instance to req object
 app.use((req, res, next) => {
-    req.db = client; // Attach PostgreSQL client to req object
+    req.db = sequelize; // Attach Sequelize client to req object
     next();
 });
 
 app.use(json());
 
-cron.schedule('*/1 * * * *', async () => {
+// Schedule cron job to run every minute
+cron.schedule('*/10 * * * *', async () => {
     try {
         await startSocket();
-        // Optionally, you can perform additional tasks after WebSocket task completes
+        // Optionally, perform additional tasks after WebSocket task completes
         // console.log('WebSocket task completed successfully.');
     } catch (error) {
         console.error('Error running WebSocket task:', error);
     }
 });
+
+// Define application routes
 app.use('/', router);
 
 // Start server
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
+
+    // Test database connection
+    testConnection();
 });
 
-export default app;
+export default server;

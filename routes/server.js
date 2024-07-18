@@ -2,25 +2,25 @@
 
 import { Router } from 'express';
 
-import { client } from '../db/db.js'; // Import PostgreSQL client instance from db.js
+import { sequelize } from '../db/db.js'; // Import PostgreSQL client instance from db.js
 const router = Router();
-import {getClient,startSocket,getSelectedData,getNodes,getOs,getCountryNode,getClientType} from '../Controller/index.js'
+import {getClient,startSocket,getSelectedData,getNodes,getOs,getCountryNode,getClientType,getNodeCount} from '../Controller/index.js'
 
 let receivedData = [];
 
 router.get('/start-websocket', startSocket)
 
-router.get('/selectedData', getSelectedData) 
+// router.get('/selectedData', getSelectedData) 
 
 
-router.get('/getCountryNodes', getCountryNode) 
+// router.get('/getCountryNodes', getCountryNode) 
 
-router.get('/getNodes', getNodes);
+// router.get('/getNodes', getNodes);
 
-router.get('/getOs', getOs);
+// router.get('/getOs', getOs);
 
-router.get('/getClientType',getClientType);
-router.get('/getClient', getClient)
+// router.get('/getClientType',getClientType);
+// router.get('/getClient', getClient)
 
 router.get('/getAllData', async (req, res) => {
     try {
@@ -45,6 +45,7 @@ router.get('/getAllData', async (req, res) => {
     }
 });
 
+router.get('/getNodeCount/:date',getNodeCount)
 
 // Export the router
 export default router;

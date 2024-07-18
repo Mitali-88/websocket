@@ -1,0 +1,18 @@
+{
+  "development": {
+      "username": "postgres",
+      "password": "Mitali@88",
+      "database": "websocket",
+      "host": "localhost",
+      "dialect": "postgres",
+      "port": "5432"
+  },
+  "production": {
+      "username": "postgres",
+      "password": "Mitali@88",
+      "database": "websocket",
+      "host": "localhost",
+      "dialect": "postgres",
+      "port": "5432"
+  }
+}

@@ -1,55 +1,24 @@
-import pkg from 'pg';
-const { Client } = pkg;
 
-import fs from 'fs';
-import path from 'path';
+import { Sequelize } from 'sequelize';
 
-// Use import.meta.url to get the current file's directory path
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-const client = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'websocket', // Replace with your database name
-    password: 'Mitali@88', // Replace with your database password
-    port: 5432,
+// Initialize Sequelize with database credentials
+const sequelize = new Sequelize('websocket', 'postgres', 'Mitali@88', {
+  host: 'localhost',
+  dialect: 'postgres',
+  port: 5432,
+  logging: false, // Disable logging (useful for production)
 });
 
-// Connect to PostgreSQL
-client.connect()
-    .then(() => {
-        console.log('Connected to PostgreSQL');
-        createTableIfNotExists();
-    })
-    .catch(err => console.error('Error connecting to PostgreSQL', err));
-
-// Function to create the table if it doesn't exist
-async function createTableIfNotExists() {
-    const modelPath = path.join(__dirname, './models/socketData.js');
-    const { default: model } = await import(`file://${modelPath}`);
-    const tableName = model.tableName;
-    const attributes = model.attributes;
-
-    let columns = [];
-    for (const [name, attr] of Object.entries(attributes)) {
-        let sqlType = attr.type.toUpperCase();
-        let primaryKey = attr.primaryKey ? 'PRIMARY KEY' : '';
-        let defaultValue = attr.default ? `DEFAULT ${attr.default}` : '';
-        columns.push(`${name} ${sqlType} ${primaryKey} ${defaultValue}`.trim());
-    }
-
-    const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS ${tableName} (
-            ${columns.join(',\n')}
-        );
-    `;
-
-    try {
-        await client.query(createTableQuery);
-        console.log(`Table '${tableName}' created or already exists.`);
-    } catch (err) {
-        console.error(`Error creating table '${tableName}':`, err);
-    }
+// Test the connection
+async function testConnection() {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection to PostgreSQL has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
 }
 
-export { client };
+// Export the Sequelize instance for use in other parts of the application
+export { sequelize, testConnection };
