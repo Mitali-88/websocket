@@ -236,34 +236,26 @@ export const getCountryNode = async () => {
         throw error; // Throw the error to be handled by the caller
     }
 };
+
+
+
 export const getNodeCount = async (req, res) => {
     try {
-        let { date } = req.params; // Date or number of days passed as a parameter
-        console.log('Requested date or days:', date);
+        const { days } = req.params; // Extract days parameter from request
 
-        let startDate, endDate;
-
-        // Determine if 'date' is a specific date or a number of days
-        if (/\d{4}-\d{2}-\d{2}/.test(date)) {
-            // If 'date' is a specific date
-            startDate = new Date(date);
-            endDate = new Date(date);
-        } else {
-            // If 'date' is a number of days (default to 7 days)
-            const days = parseInt(date) || 7; // Default to 7 days if not provided
-            endDate = new Date(); // Current date
-            startDate = new Date();
-            startDate.setDate(startDate.getDate() - days); // Calculate start date based on number of days
+        // Check if days is not a number or if it's less than or equal to 0
+        if (isNaN(days) || parseInt(days) <= 0) {
+            return res.status(400).json({ error: 'Invalid number of days' });
         }
 
-        // Validate dates
-        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-            throw new Error('Invalid date range');
-        }
+        const numDays = parseInt(days);
 
-        console.log(`Fetching node counts from ${startDate.toISOString().slice(0, 10)} to ${endDate.toISOString().slice(0, 10)}`);
+        // Calculate start date and end date based on number of days
+        const endDate = new Date(); // Current date
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - numDays); // Calculate start date based on number of days
 
-        // Query node counts from NodeData table for the specified date or date range
+        // Query node counts from NodeData table for the specified number of days
         const result = await NodeData.findAll({
             attributes: [
                 [Sequelize.fn('DATE', Sequelize.col('lastUpdate')), 'date'],
@@ -279,26 +271,11 @@ export const getNodeCount = async (req, res) => {
             order: [[Sequelize.fn('DATE', Sequelize.col('lastUpdate')), 'ASC']]
         });
 
-        // Log the generated SQL query
-        console.log('Generated SQL:', result.toString());
-
-        // Prepare response with node count for the specified date or date range
+        // Prepare response with node count for the specified number of days
         let response = result.map(item => ({
             date: item.dataValues.date, // The date is already in 'YYYY-MM-DD' format
-            nodeCount: item.dataValues.nodeCount
+            nodeCount: item.dataValues.nodeCount.toString() // Ensure nodeCount is a string as per the desired output
         }));
-
-        // If no records found, add default nodeCount as 0 for each date in the range
-        if (response.length === 0) {
-            let currentDate = new Date(startDate);
-            while (currentDate <= endDate) {
-                response.push({
-                    date: currentDate.toISOString().slice(0, 10),
-                    nodeCount: 0
-                });
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-        }
 
         res.json(response); // Return the fetched data as JSON response
     } catch (error) {
@@ -306,3 +283,7 @@ export const getNodeCount = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
+
+

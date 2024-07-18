@@ -45,7 +45,7 @@ router.get('/getAllData', async (req, res) => {
     }
 });
 
-router.get('/getNodeCount/:date',getNodeCount)
+router.get('/getNodeCount/:days',getNodeCount)
 
 // Export the router
 export default router;
