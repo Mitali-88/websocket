@@ -57,16 +57,16 @@ export const getSelectedData = async (receivedData) => {
                 }
             });
 
-            // Map and process data for insertion or update in Sequelize models
+            // Process each data entry
             const results = await Promise.all(newData.map(async data => {
-                const id = data?.id || 'Unknown id';
+                const node = data?.info?.node || 'Unknown node';
 
                 const formattedData = {
                     country: data?.geo?.country || 'Unknown country',
                     client: data?.info?.client || 'Unknown client',
-                    lastUpdate: data?.uptime?.lastUpdate, // Use date directly from data
+                    lastUpdate: new Date(data?.uptime?.lastUpdate).toISOString(),
                     port: data?.info?.port || 'Unknown port',
-                    node: data?.info?.node || 'Unknown node',
+                    node: node,
                     os: `${data?.info?.os || 'Unknown os'} - ${data?.info?.os_v || 'Unknown os_v'}`,
                     name: data?.info?.name || 'Unknown name',
                     miner: data?.stats?.block?.miner || 'Unknown miner',
@@ -85,44 +85,61 @@ export const getSelectedData = async (receivedData) => {
                 };
 
                 try {
-                    // Check if data exists for the same date in SocketData
-                    let existingSocketData = await SocketData.findOne({
+                    // Check if data exists for the same node and date in SocketData
+                    const existingSocketData = await SocketData.findOne({
                         where: {
-                            id: id,
-                            lastUpdate: formattedData.lastUpdate
+                            node: formattedData.node,
+                            lastUpdate: {
+                                [Op.between]: [
+                                    new Date(formattedData.lastUpdate).setHours(0, 0, 0, 0), // Start of formattedData.lastUpdate day
+                                    new Date(formattedData.lastUpdate).setHours(23, 59, 59, 999) // End of formattedData.lastUpdate day
+                                ]
+                            }
                         }
                     });
 
                     if (existingSocketData) {
-                        // Data exists, update it
+                        // Data exists for today and same node, update it
                         await existingSocketData.update(formattedData);
+                        // console.log(`Data updated for node ${formattedData.node}`);
                     } else {
-                        // Data does not exist, create new entry
+                        // Data does not exist for today or same node, create new entry
                         await SocketData.create(formattedData);
+                        // console.log(`Data created for node ${formattedData.node}`);
                     }
+                } catch (error) {
+                    console.error(`Error saving data for node ${formattedData.node}:`, error);
+                }
 
-                    // Check if data exists for the same date in NodeData
-                    let existingNodeData = await NodeData.findOne({
+                try {
+                    // Check if data exists for the same node and date in NodeData
+                    const existingNodeData = await NodeData.findOne({
                         where: {
                             node: formattedData.node,
-                            lastUpdate: formattedData.lastUpdate
+                            lastUpdate: {
+                                [Op.between]: [
+                                    new Date(formattedData.lastUpdate).setHours(0, 0, 0, 0), // Start of formattedData.lastUpdate day
+                                    new Date(formattedData.lastUpdate).setHours(23, 59, 59, 999) // End of formattedData.lastUpdate day
+                                ]
+                            }
                         }
                     });
 
                     if (existingNodeData) {
-                        // Data exists, update it
+                        // Data exists for today and same lastUpdate, update it
                         await existingNodeData.update(formattedData);
-                        return { success: true, message: `Data updated for node ${formattedData.node}` };
+                        // console.log(`Data updated for node ${formattedData.node}`);
                     } else {
-                        // Data does not exist, create new entry
+                        // Data does not exist for today or same lastUpdate, create new entry
                         await NodeData.create(formattedData);
-                        return { success: true, message: `Data created for node ${formattedData.node}` };
+                        // console.log(`Data created for node ${formattedData.node}`);
                     }
-
                 } catch (error) {
-                    console.error(`Error saving data for id ${id} and node ${formattedData.node}:`, error);
-                    return { success: false, message: `Error saving data for id ${id} and node ${formattedData.node}: ${error.message}` };
+                    console.error(`Error saving data for node ${formattedData.node}:`, error);
                 }
+
+                // Return success message for each data entry
+                return { success: true };
             }));
 
             return { success: true, message: 'All data processed successfully', results };
@@ -134,6 +151,8 @@ export const getSelectedData = async (receivedData) => {
         return { success: false, message: `Error: ${error.message}` };
     }
 };
+
+
 
 
 export const getNodes = async () => {

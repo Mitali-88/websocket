@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 app.use(json());
 
 // Schedule cron job to run every minute
-cron.schedule('*/10 * * * *', async () => {
+cron.schedule('*/1 * * * *', async () => {
     try {
         await startSocket();
         // Optionally, perform additional tasks after WebSocket task completes

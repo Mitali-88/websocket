@@ -6,14 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
-    "migrate": "sequelize db:migrate"
+     "migrate": "sequelize db:migrate"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "express": "^4.19.2",
-    "mysql2": "^3.10.3",
     "node-cron": "^3.0.3",
     "pg": "^8.12.0",
     "sequelize": "^6.37.3",
